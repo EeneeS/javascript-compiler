@@ -76,11 +76,13 @@ func (l *Lexer) readNumber() (string, tokenType) {
 }
 
 func (l *Lexer) readString() string {
+	l.readChar()
 	startPostition := l.position
 	for l.currentChar != '"' {
 		l.readChar()
 	}
-	return l.input[startPostition:l.position]
+	l.readChar()
+	return l.input[startPostition : l.position-1]
 }
 
 func (l *Lexer) readIdentifier() string {
