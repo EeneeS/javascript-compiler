@@ -23,8 +23,10 @@ func main() {
 
 	lxr := lexer.NewLexer(string(content))
 
+	var tokens []lexer.Token
 	for t := lxr.NextToken(); t.Type != lexer.EOF; t = lxr.NextToken() {
-		fmt.Println(t)
+		tokens = append(tokens, t)
 	}
+	fmt.Println(tokens)
 
 }

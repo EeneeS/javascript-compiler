@@ -10,16 +10,17 @@ const (
 	EOF tokenType = iota
 	Illegal
 	Int
-	String
 	Plus
 	Minus
 	Multiply
 	Divide
-	Lparen
-	Rparen
+	Power
+	Modulo
 	Equals
 	Identifier
 	Keyword
+	Lparen
+	Rparen
 )
 
 type Token struct {
@@ -74,7 +75,7 @@ func (l *Lexer) readIdentifier() string {
 }
 
 func (l *Lexer) lookUpIdentifier(identifier string) tokenType {
-	keywords := []string{"int", "string", "function", "if", "else"}
+	keywords := []string{"log"}
 	for _, kw := range keywords {
 		if identifier == kw {
 			return Keyword
@@ -93,8 +94,20 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Plus, Literal: string(l.currentChar)}
 	case '-':
 		t = Token{Type: Minus, Literal: string(l.currentChar)}
+	case '*':
+		t = Token{Type: Multiply, Literal: string(l.currentChar)}
+	case '/':
+		t = Token{Type: Divide, Literal: string(l.currentChar)}
+	case '^':
+		t = Token{Type: Power, Literal: string(l.currentChar)}
+	case '%':
+		t = Token{Type: Modulo, Literal: string(l.currentChar)}
 	case '=':
 		t = Token{Type: Equals, Literal: string(l.currentChar)}
+	case '(':
+		t = Token{Type: Lparen, Literal: string(l.currentChar)}
+	case ')':
+		t = Token{Type: Rparen, Literal: string(l.currentChar)}
 	default:
 		if unicode.IsDigit(l.currentChar) {
 			t.Literal = l.readNumber()
