@@ -10,6 +10,7 @@ const (
 	EOF tokenType = iota
 	Illegal
 	Int
+	Float
 	Plus
 	Minus
 	Multiply
@@ -57,13 +58,16 @@ func (l *Lexer) skipWhiteSpace() {
 	}
 }
 
-// TODO implements floats
-func (l *Lexer) readNumber() string {
+func (l *Lexer) readNumber() (string, tokenType) {
 	startPostition := l.position
-	for unicode.IsDigit(l.currentChar) {
+	tt := Int
+	for unicode.IsDigit(l.currentChar) || l.currentChar == '.' {
+		if l.currentChar == '.' {
+			tt = Float
+		}
 		l.readChar()
 	}
-	return l.input[startPostition:l.position]
+	return l.input[startPostition:l.position], tt
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -110,8 +114,7 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Rparen, Literal: string(l.currentChar)}
 	default:
 		if unicode.IsDigit(l.currentChar) {
-			t.Literal = l.readNumber()
-			t.Type = Int
+			t.Literal, t.Type = l.readNumber()
 		} else if unicode.IsLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
 			t.Type = l.lookUpIdentifier(t.Literal)
