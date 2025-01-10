@@ -11,6 +11,7 @@ const (
 	Illegal
 	Int
 	Float
+	String
 	Plus
 	Minus
 	Multiply
@@ -22,6 +23,10 @@ const (
 	Keyword
 	Lparen
 	Rparen
+	LessThan
+	GreaterThan
+	Lbracket
+	Rbracket
 )
 
 type Token struct {
@@ -70,16 +75,29 @@ func (l *Lexer) readNumber() (string, tokenType) {
 	return l.input[startPostition:l.position], tt
 }
 
+func (l *Lexer) readString() string {
+	startPostition := l.position
+	for l.currentChar != '"' {
+		l.readChar()
+	}
+	return l.input[startPostition:l.position]
+}
+
 func (l *Lexer) readIdentifier() string {
 	startPosition := l.position
-	for unicode.IsLetter(l.currentChar) || l.currentChar == '_' {
+	for unicode.IsLetter(l.currentChar) || unicode.IsDigit(l.currentChar) || l.currentChar == '_' {
 		l.readChar()
 	}
 	return l.input[startPosition:l.position]
 }
 
 func (l *Lexer) lookUpIdentifier(identifier string) tokenType {
-	keywords := []string{"log"}
+	keywords := []string{
+		"int", "string", "float",
+		"if", "else",
+		"and", "or",
+		"function", "return",
+	}
 	for _, kw := range keywords {
 		if identifier == kw {
 			return Keyword
@@ -112,6 +130,19 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Lparen, Literal: string(l.currentChar)}
 	case ')':
 		t = Token{Type: Rparen, Literal: string(l.currentChar)}
+	case '<':
+		t = Token{Type: LessThan, Literal: string(l.currentChar)}
+	case '>':
+		t = Token{Type: GreaterThan, Literal: string(l.currentChar)}
+	case '{':
+		t = Token{Type: Lbracket, Literal: string(l.currentChar)}
+	case '}':
+		t = Token{Type: Rbracket, Literal: string(l.currentChar)}
+	case '"':
+		t.Type = String
+		t.Literal = l.readString()
+		return t
+
 	default:
 		if unicode.IsDigit(l.currentChar) {
 			t.Literal, t.Type = l.readNumber()

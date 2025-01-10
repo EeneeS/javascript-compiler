@@ -27,6 +27,7 @@ func main() {
 	for t := lxr.NextToken(); t.Type != lexer.EOF; t = lxr.NextToken() {
 		tokens = append(tokens, t)
 	}
+
 	fmt.Println(tokens)
 
 }
