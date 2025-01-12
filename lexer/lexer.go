@@ -21,6 +21,8 @@ const (
 	Equals
 	Identifier
 	Keyword
+	And
+	Or
 	Lparen
 	Rparen
 	LessThan
@@ -95,9 +97,9 @@ func (l *Lexer) readIdentifier() string {
 
 func (l *Lexer) lookUpIdentifier(identifier string) tokenType {
 	keywords := []string{
-		"int", "string", "float",
+		"let", "const",
 		"if", "else",
-		"and", "or",
+		"true", "false", "null",
 		"function", "return",
 	}
 	for _, kw := range keywords {
@@ -140,11 +142,29 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Lbracket, Literal: string(l.currentChar)}
 	case '}':
 		t = Token{Type: Rbracket, Literal: string(l.currentChar)}
+	case '&':
+		l.readChar()
+		if l.currentChar == '&' {
+			t.Type = And
+			t.Literal = "&&"
+		} else {
+			t.Type = Illegal
+		}
+		l.readChar()
+		return t
+	case '|':
+		l.readChar()
+		if l.currentChar == '|' {
+			t.Type = Or
+			t.Literal = "||"
+		} else {
+			t.Type = Illegal
+		}
+		return t
 	case '"':
 		t.Type = String
 		t.Literal = l.readString()
 		return t
-
 	default:
 		if unicode.IsDigit(l.currentChar) {
 			t.Literal, t.Type = l.readNumber()

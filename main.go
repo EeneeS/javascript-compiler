@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/eenees/slow/lexer"
-	"github.com/eenees/slow/parser"
+	"os"
 )
 
 func main() {
@@ -30,7 +28,7 @@ func main() {
 		tokens = append(tokens, t)
 	}
 
-	prs := parser.NewParser(tokens)
+	// prs := parser.NewParser(tokens)
 
 	fmt.Println(tokens)
 
