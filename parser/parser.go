@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/eenees/slow/lexer"
 )
 
@@ -57,9 +58,6 @@ func (p *Parser) Parse() Program {
 		case lexer.Identifier:
 			node := p.parseIdentifier(token.Literal)
 			ast.nodes = append(ast.nodes, node)
-		case lexer.Keyword:
-			node := p.parseKeyword()
-			ast.nodes = append(ast.nodes, node)
 		default:
 			// fmt.Println("Unidentified token.")
 		}
@@ -91,10 +89,6 @@ func (p *Parser) parseVariableNode(name string, isConst bool) ASTNode {
 			value:   LiteralNode{value: currentToken.Literal},
 		}
 	}
-	return nil
-}
-
-func (p *Parser) parseKeyword() ASTNode {
 	return nil
 }
 

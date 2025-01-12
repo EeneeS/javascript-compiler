@@ -7,7 +7,7 @@ import (
 type tokenType int
 
 const (
-	EOF tokenType = iota
+	EOF tokenType = iota // 0
 	Illegal
 	Int
 	Float
@@ -20,24 +20,23 @@ const (
 	Modulo // 10
 	Equals
 	Identifier
-	Keyword
 	And
-	Or // 15
-	Lparen
+	Or
+	Lparen // 15
 	Rparen
 	LessThan
 	GreaterThan
-	Lbracket // 20
-	Rbracket
+	Lbracket
+	Rbracket // 20
 	Let
 	Const
 	If
-	Else // 25
-	True
+	Else
+	True // 25
 	False
 	Null
 	Function
-	Return // 30
+	Return
 )
 
 type Token struct {
