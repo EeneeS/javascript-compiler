@@ -28,8 +28,8 @@ func main() {
 		tokens = append(tokens, t)
 	}
 
-	// prs := parser.NewParser(tokens)
-
-	fmt.Println(tokens)
+	for _, t := range tokens {
+		fmt.Println(t)
+	}
 
 }

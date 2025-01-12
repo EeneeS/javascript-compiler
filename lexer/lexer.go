@@ -87,6 +87,24 @@ func (l *Lexer) readString() string {
 	return l.input[startPostition : l.position-1]
 }
 
+func (l *Lexer) readLogicalOp(op rune) (tt tokenType, tl string) {
+	l.readChar()
+	if l.currentChar == op {
+		if op == '&' {
+			tt = And
+			tl = "&&"
+		} else if op == '|' {
+			tt = Or
+			tl = "||"
+		}
+	} else {
+		tt = Illegal
+		tl = string(op)
+	}
+	l.readChar()
+	return tt, tl
+}
+
 func (l *Lexer) readIdentifier() string {
 	startPosition := l.position
 	for unicode.IsLetter(l.currentChar) || unicode.IsDigit(l.currentChar) || l.currentChar == '_' {
@@ -143,23 +161,14 @@ func (l *Lexer) NextToken() Token {
 	case '}':
 		t = Token{Type: Rbracket, Literal: string(l.currentChar)}
 	case '&':
-		l.readChar()
-		if l.currentChar == '&' {
-			t.Type = And
-			t.Literal = "&&"
-		} else {
-			t.Type = Illegal
-		}
-		l.readChar()
+		tt, tl := l.readLogicalOp('&')
+		t.Type = tt
+		t.Literal = tl
 		return t
 	case '|':
-		l.readChar()
-		if l.currentChar == '|' {
-			t.Type = Or
-			t.Literal = "||"
-		} else {
-			t.Type = Illegal
-		}
+		tt, tl := l.readLogicalOp('|')
+		t.Type = tt
+		t.Literal = tl
 		return t
 	case '"':
 		t.Type = String
