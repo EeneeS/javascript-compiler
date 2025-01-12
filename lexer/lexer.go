@@ -37,6 +37,7 @@ const (
 	Null
 	Function
 	Return
+	Comma
 )
 
 type Token struct {
@@ -171,6 +172,8 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Lbracket, Literal: string(l.currentChar)}
 	case '}':
 		t = Token{Type: Rbracket, Literal: string(l.currentChar)}
+	case ',':
+		t = Token{Type: Comma, Literal: string(l.currentChar)}
 	case '&':
 		tt, tl := l.readLogicalOp('&')
 		t.Type = tt
