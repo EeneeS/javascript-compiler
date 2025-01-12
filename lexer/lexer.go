@@ -7,7 +7,7 @@ import (
 type tokenType int
 
 const (
-	EOF tokenType = iota
+	EOF tokenType = iota // 0
 	Illegal
 	Int
 	Float
@@ -20,15 +20,24 @@ const (
 	Modulo // 10
 	Equals
 	Identifier
-	Keyword
 	And
-	Or // 15
-	Lparen
+	Or
+	Lparen // 15
 	Rparen
 	LessThan
 	GreaterThan
-	Lbracket // 20
-	Rbracket
+	Lbracket
+	Rbracket // 20
+	Let
+	Const
+	If
+	Else
+	True // 25
+	False
+	Null
+	Function
+	Return
+	Comma
 )
 
 type Token struct {
@@ -114,16 +123,19 @@ func (l *Lexer) readIdentifier() string {
 }
 
 func (l *Lexer) lookUpIdentifier(identifier string) tokenType {
-	keywords := []string{
-		"let", "const",
-		"if", "else",
-		"true", "false", "null",
-		"function", "return",
+	keywords := map[string]tokenType{
+		"let":      Let,
+		"const":    Const,
+		"if":       If,
+		"else":     Else,
+		"true":     True,
+		"false":    False,
+		"null":     Null,
+		"function": Function,
+		"return":   Return,
 	}
-	for _, kw := range keywords {
-		if identifier == kw {
-			return Keyword
-		}
+	if tokenType, exists := keywords[identifier]; exists {
+		return tokenType
 	}
 	return Identifier
 }
@@ -160,6 +172,8 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Lbracket, Literal: string(l.currentChar)}
 	case '}':
 		t = Token{Type: Rbracket, Literal: string(l.currentChar)}
+	case ',':
+		t = Token{Type: Comma, Literal: string(l.currentChar)}
 	case '&':
 		tt, tl := l.readLogicalOp('&')
 		t.Type = tt
@@ -177,9 +191,11 @@ func (l *Lexer) NextToken() Token {
 	default:
 		if unicode.IsDigit(l.currentChar) {
 			t.Literal, t.Type = l.readNumber()
+			return t
 		} else if unicode.IsLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
 			t.Type = l.lookUpIdentifier(t.Literal)
+			return t
 		}
 	}
 
