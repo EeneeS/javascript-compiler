@@ -6,6 +6,8 @@ function test() {
   return "test"
 }
 
+test()
+
 const myString = "string value"
 
 function ifElse() {

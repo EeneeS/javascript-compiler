@@ -177,9 +177,11 @@ func (l *Lexer) NextToken() Token {
 	default:
 		if unicode.IsDigit(l.currentChar) {
 			t.Literal, t.Type = l.readNumber()
+			return t
 		} else if unicode.IsLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
 			t.Type = l.lookUpIdentifier(t.Literal)
+			return t
 		}
 	}
 
