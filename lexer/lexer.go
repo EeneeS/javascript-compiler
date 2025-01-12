@@ -29,6 +29,15 @@ const (
 	GreaterThan
 	Lbracket // 20
 	Rbracket
+	Let
+	Const
+	If
+	Else // 25
+	True
+	False
+	Null
+	Function
+	Return // 30
 )
 
 type Token struct {
@@ -114,16 +123,19 @@ func (l *Lexer) readIdentifier() string {
 }
 
 func (l *Lexer) lookUpIdentifier(identifier string) tokenType {
-	keywords := []string{
-		"let", "const",
-		"if", "else",
-		"true", "false", "null",
-		"function", "return",
+	keywords := map[string]tokenType{
+		"let":      Let,
+		"const":    Const,
+		"if":       If,
+		"else":     Else,
+		"true":     True,
+		"false":    False,
+		"null":     Null,
+		"function": Function,
+		"return":   Return,
 	}
-	for _, kw := range keywords {
-		if identifier == kw {
-			return Keyword
-		}
+	if tokenType, exists := keywords[identifier]; exists {
+		return tokenType
 	}
 	return Identifier
 }
