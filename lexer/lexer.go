@@ -12,22 +12,22 @@ const (
 	Int
 	Float
 	String
-	Plus
+	Plus // 5
 	Minus
 	Multiply
 	Divide
 	Power
-	Modulo
+	Modulo // 10
 	Equals
 	Identifier
 	Keyword
 	And
-	Or
+	Or // 15
 	Lparen
 	Rparen
 	LessThan
 	GreaterThan
-	Lbracket
+	Lbracket // 20
 	Rbracket
 )
 
