@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/eenees/slow/lexer"
 )
 
@@ -13,12 +11,20 @@ type Program struct {
 type ASTNode interface{}
 
 type LiteralNode struct {
-	value interface{}
+	value interface{} // int, float, string
 }
 
+type varType string
+
+const (
+	Const varType = "const"
+	Let   varType = "let"
+)
+
 type VariableNode struct {
-	name  string
-	value ASTNode
+	name    string
+	varType varType
+	value   ASTNode
 }
 
 type Parser struct {
@@ -30,7 +36,7 @@ func NewParser(tokens []lexer.Token) *Parser {
 	return &Parser{tokens: tokens, current: 0}
 }
 
-func (p *Parser) nextToken() lexer.Token {
+func (p *Parser) currentToken() lexer.Token {
 	if p.current > len(p.tokens) {
 		return lexer.Token{Type: lexer.EOF}
 	}
@@ -38,7 +44,7 @@ func (p *Parser) nextToken() lexer.Token {
 }
 
 func (p *Parser) consume() lexer.Token {
-	token := p.nextToken()
+	token := p.currentToken()
 	p.current++
 	return token
 }
@@ -49,10 +55,11 @@ func (p *Parser) Parse() Program {
 		token := p.consume()
 		switch token.Type {
 		case lexer.Identifier:
-			node := p.parseVariableNode(token.Literal)
+			node := p.parseIdentifier(token.Literal)
 			ast.nodes = append(ast.nodes, node)
 		case lexer.Keyword:
-			// fmt.Println("Keyword")
+			node := p.parseKeyword()
+			ast.nodes = append(ast.nodes, node)
 		default:
 			// fmt.Println("Unidentified token.")
 		}
@@ -60,25 +67,43 @@ func (p *Parser) Parse() Program {
 	return ast
 }
 
-func (p *Parser) parseVariableNode(name string) ASTNode {
-	nextToken := p.nextToken()
-	switch nextToken.Type {
-	case lexer.Equals:
-		p.consume()
-		value := p.parseExpression()
-		test := VariableNode{
-			name:  name,
-			value: value,
-		}
-		return test
-	case lexer.Lparen:
-		// check if next is also parent
+func (p *Parser) parseIdentifier(name string) ASTNode {
+	currentToken := p.consume()
+	if currentToken.Type == lexer.Equals {
+		return p.parseVariableNode(name, false)
+	} else if currentToken.Type == lexer.Lparen {
+		return p.parseFunctionCall()
 	}
 	return nil
 }
 
+func (p *Parser) parseVariableNode(name string, isConst bool) ASTNode {
+	currentToken := p.consume()
+	varType := Let
+	if isConst {
+		varType = Const
+	}
+	switch currentToken.Type {
+	case lexer.Int, lexer.Float, lexer.String:
+		return VariableNode{
+			name:    name,
+			varType: varType,
+			value:   LiteralNode{value: currentToken.Literal},
+		}
+	}
+	return nil
+}
+
+func (p *Parser) parseKeyword() ASTNode {
+	return nil
+}
+
+func (p *Parser) parseFunctionCall() ASTNode {
+	return nil
+}
+
 func (p *Parser) parseExpression() ASTNode {
-	nextToken := p.nextToken()
+	nextToken := p.currentToken()
 	switch nextToken.Type {
 	case lexer.Int, lexer.Float, lexer.String:
 		return LiteralNode{value: nextToken.Literal}

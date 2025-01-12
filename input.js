@@ -1,6 +1,6 @@
-a = 10
-b = 20
-c = a + b
+let a = 10
+let b = 20
+let c = a + b
 
 function test() {
   return "test"
