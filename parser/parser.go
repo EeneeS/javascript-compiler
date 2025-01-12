@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-
 	"github.com/eenees/slow/lexer"
 )
 
@@ -39,14 +38,14 @@ func NewParser(tokens []lexer.Token) *Parser {
 }
 
 func (p *Parser) currentToken() lexer.Token {
-	if p.current > len(p.tokens) {
+	if p.current >= len(p.tokens) {
 		return lexer.Token{Type: lexer.EOF}
 	}
 	return p.tokens[p.current]
 }
 
 func (p *Parser) peak() lexer.Token {
-	if p.current+1 > len(p.tokens) {
+	if p.current+1 >= len(p.tokens) {
 		return lexer.Token{Type: lexer.EOF}
 	}
 	return p.tokens[p.current+1]
@@ -74,6 +73,10 @@ func (p *Parser) Parse() Program {
 			p.consume() // consume the 'const'
 			node := p.parseVariableNode(true)
 			ast.nodes = append(ast.nodes, node)
+		case lexer.Function:
+			p.consume() // consume the 'function'
+			node := p.parseFunction()
+			ast.nodes = append(ast.nodes, node)
 		default:
 			p.consume()
 		}
@@ -86,8 +89,6 @@ func (p *Parser) parseIdentifier() ASTNode {
 	if nextToken.Type == lexer.Equals {
 		return p.parseVariableNode(false)
 	} else if nextToken.Type == lexer.Lparen {
-		fmt.Println("parse function")
-		p.consume()
 		return p.parseFunctionCall()
 	} else {
 		fmt.Println("parse unknown")
@@ -113,10 +114,22 @@ func (p *Parser) parseVariableNode(isConst bool) ASTNode {
 			value:   LiteralNode{value: value.Literal},
 		}
 	}
+	return fmt.Errorf("Invalid type detected: %v", value.Type)
+}
+
+func (p *Parser) parseFunction() ASTNode {
+	for token := p.consume(); token.Type != lexer.Rbracket; token = p.consume() {
+		// TODO: check for parameters, read function body.
+	}
 	return nil
 }
 
 func (p *Parser) parseFunctionCall() ASTNode {
+	// currentToken := p.currentToken()
+	// fmt.Println(currentToken)
+	for token := p.consume(); token.Type != lexer.Rparen; token = p.consume() {
+		// TODO: read the parameters.
+	}
 	return nil
 }
 
