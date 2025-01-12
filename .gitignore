@@ -25,4 +25,5 @@ go.work.sum
 .env
 
 code.slow
+test.js
 slow

@@ -66,9 +66,16 @@ func (p *Parser) Parse() Program {
 		case lexer.Identifier:
 			node := p.parseIdentifier()
 			ast.nodes = append(ast.nodes, node)
+		case lexer.Let:
+			p.consume() // consume the 'let'
+			node := p.parseVariableNode(false)
+			ast.nodes = append(ast.nodes, node)
+		case lexer.Const:
+			p.consume() // consume the 'const'
+			node := p.parseVariableNode(true)
+			ast.nodes = append(ast.nodes, node)
 		default:
 			p.consume()
-			// fmt.Println("Unidentified token.")
 		}
 	}
 	return ast
@@ -83,7 +90,8 @@ func (p *Parser) parseIdentifier() ASTNode {
 		p.consume()
 		return p.parseFunctionCall()
 	} else {
-		p.consume()
+		fmt.Println("parse unknown")
+		fmt.Println(p.consume())
 	}
 	return nil
 }
