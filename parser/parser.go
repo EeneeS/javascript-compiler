@@ -128,7 +128,7 @@ func (p *Parser) parseFunctionCall() ASTNode {
 	// currentToken := p.currentToken()
 	// fmt.Println(currentToken)
 	for token := p.consume(); token.Type != lexer.Rparen; token = p.consume() {
-		// TODO: read the parameters.
+		// TODO: read the parameters. / create struct for functionCall (name, []parameters)
 	}
 	return nil
 }
