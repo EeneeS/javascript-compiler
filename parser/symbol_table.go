@@ -29,3 +29,13 @@ func NewSymbolTable(st *SymbolTable) *SymbolTable {
 
 func (st *SymbolTable) Define(name string, t SymbolType, value interface{}) {
 }
+
+func (st *SymbolTable) Resolve(name string) (*Symbol, bool) {
+	if symbol, exists := st.table[name]; exists {
+		return &symbol, true
+	}
+	if st.parent != nil {
+		return st.parent.Resolve(name)
+	}
+	return nil, false
+}
