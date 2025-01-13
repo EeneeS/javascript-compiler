@@ -15,8 +15,6 @@ type LiteralNode struct {
 	value interface{} // int, float, string
 }
 
-//TODO: implement objecs, arrays
-
 type varType string
 
 const (
@@ -31,12 +29,17 @@ type VariableNode struct {
 }
 
 type Parser struct {
-	tokens  []lexer.Token
-	current int
+	tokens      []lexer.Token
+	current     int
+	symbolTable SymbolTable
 }
 
 func NewParser(tokens []lexer.Token) *Parser {
-	return &Parser{tokens: tokens, current: 0}
+	return &Parser{
+		tokens:      tokens,
+		current:     0,
+		symbolTable: *NewSymbolTable(nil),
+	}
 }
 
 func (p *Parser) currentToken() lexer.Token {

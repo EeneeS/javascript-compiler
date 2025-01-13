@@ -21,5 +21,11 @@ type SymbolTable struct {
 }
 
 func NewSymbolTable(st *SymbolTable) *SymbolTable {
-	return &SymbolTable{table: make(map[string]Symbol), parent: st}
+	return &SymbolTable{
+		table:  make(map[string]Symbol),
+		parent: st,
+	}
+}
+
+func (st *SymbolTable) Define(name string, t SymbolType, value interface{}) {
 }
