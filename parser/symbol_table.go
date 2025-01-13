@@ -19,3 +19,7 @@ type SymbolTable struct {
 	table  map[string]Symbol
 	parent *SymbolTable
 }
+
+func NewSymbolTable(st *SymbolTable) *SymbolTable {
+	return &SymbolTable{table: make(map[string]Symbol), parent: st}
+}
