@@ -15,6 +15,8 @@ type LiteralNode struct {
 	value interface{} // int, float, string
 }
 
+//TODO: implement objecs, arrays
+
 type varType string
 
 const (
